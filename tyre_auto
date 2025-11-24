@@ -1,0 +1,102 @@
+# requirements: opencv-python, pillow, numpy, pandas, imagehash, paddleocr, python-Levenshtein
+# pip install opencv-python pillow numpy pandas imagehash paddleocr python-Levenshtein
+
+import cv2, os, re, pandas as pd, numpy as np
+from PIL import Image
+import imagehash
+from paddleocr import PaddleOCR
+
+ocr = PaddleOCR(lang='en', use_angle_cls=True, show_log=False)
+
+SIZE_RE = re.compile(r'(?P<w>\d{3})\s*/\s*(?P<ar>\d{2})\s*([RrDd])\s*(?P<rim>\d{2})(?P<suffix>[A-Za-z+]*)')
+LOAD_SPEED_RE = re.compile(r'(?P<li1>\d{2,3})(?:\s*/\s*(?P<li2>\d{2,3}))?\s*(?P<speed>[A-Z])\b')
+
+def ocr_text(img_bgr):
+    # light preproc for paper labels
+    gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+    gray = cv2.bilateralFilter(gray, 7, 75, 75)
+    # OCR expects RGB
+    result = ocr.ocr(cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB), cls=True)
+    lines = []
+    for page in result:
+        for box, (txt, conf) in page:
+            lines.append((txt, float(conf)))
+    # sort by confidence, keep joined text too
+    text = "\n".join([t for t,_ in sorted(lines, key=lambda x: -x[1])])
+    return text, lines
+
+def parse_fields(text):
+    brand = None
+    size_raw = None
+    width_mm = aspect = construction = rim_in = suffix = None
+    load1 = load2 = speed = None
+
+    m = SIZE_RE.search(text.replace(' ', ''))
+    if m:
+        size_raw = m.group(0)
+        width_mm = int(m.group('w'))
+        aspect = int(m.group('ar'))
+        construction = 'R' if 'R' in m.group(0).upper() else 'D'
+        rim_in = int(m.group('rim'))
+        suffix = m.group('suffix').upper() or None
+
+    m2 = LOAD_SPEED_RE.search(text)
+    if m2:
+        load1 = int(m2.group('li1'))
+        load2 = int(m2.group('li2')) if m2.group('li2') else None
+        speed = m2.group('speed')
+
+    # crude brand heuristic: longest UPPERCASE token not in the size/load strings
+    tokens = [t for t in re.findall(r'[A-Z0-9+/-]{3,}', text.upper())]
+    ignore = set()
+    if size_raw: ignore.update(re.findall(r'[A-Z0-9+/-]+', size_raw.upper()))
+    if speed:    ignore.add(speed)
+    cands = [t for t in tokens if t not in ignore and not t.isdigit()]
+    brand = max(cands, key=len) if cands else None
+
+    return dict(
+        brand=brand, size_raw=size_raw, width_mm=width_mm, aspect=aspect,
+        construction=construction, rim_in=rim_in, suffix=suffix,
+        load1=load1, load2=load2, speed=speed
+    )
+
+def frames_from_video(video_path, fps_sample=1):
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30
+    interval = int(round(fps / fps_sample))
+    f = 0
+    while True:
+        ok, frame = cap.read()
+        if not ok: break
+        if f % interval == 0:
+            yield int(f/fps) , frame
+        f += 1
+    cap.release()
+
+def process_images(paths, out_csv='tires.csv'):
+    seen_hashes = set()
+    rows = []
+    for path in paths:
+        if path.lower().endswith(('.mp4', '.mov', '.mkv', '.avi')):
+            for t, frame in frames_from_video(path, fps_sample=1):
+                ph = imagehash.phash(Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
+                if min((ph - h) for h in seen_hashes) if seen_hashes else 100 > 8:
+                    seen_hashes.add(ph)
+                    text, _ = ocr_text(frame)
+                    fields = parse_fields(text)
+                    fields.update(dict(source=path, frame_sec=t))
+                    rows.append(fields)
+        else:
+            img = cv2.imread(path)
+            if img is None: continue
+            ph = imagehash.phash(Image.open(path))
+            if min((ph - h) for h in seen_hashes) if seen_hashes else 100 > 8:
+                seen_hashes.add(ph)
+                text, _ = ocr_text(img)
+                fields = parse_fields(text)
+                fields.update(dict(source=path, frame_sec=None))
+                rows.append(fields)
+
+    df = pd.DataFrame(rows).drop_duplicates(subset=['brand','size_raw','load1','speed'], keep='first')
+    df.to_csv(out_csv, index=False)
+    return df
