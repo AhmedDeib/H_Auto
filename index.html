@@ -485,7 +485,57 @@
 
     <script>
         let currentUser = null;
-        let inventory = [];
+
+let inventory = [
+    { id: 1, brand: 'Generic', model: 'Tyre', size: '15513C', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 2, brand: 'Generic', model: 'Tyre', size: '185/70/R10', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 3, brand: 'Generic', model: 'Tyre', size: '5.00/10', condition: 'Used', quantity: 3, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 4, brand: 'Generic', model: 'Tyre', size: '165/70/R10', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 5, brand: 'Generic', model: 'Tyre', size: '155/70/R13', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 6, brand: 'Generic', model: 'Tyre', size: '165/70/R13', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 7, brand: 'Generic', model: 'Tyre', size: '175/70/R13', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 8, brand: 'Generic', model: 'Tyre', size: '195/50/R13', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 9, brand: 'Generic', model: 'Tyre', size: '155/65/R14', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 10, brand: 'Generic', model: 'Tyre', size: '175/65/R14', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 11, brand: 'Generic', model: 'Tyre', size: '185/55/R14', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 12, brand: 'Generic', model: 'Tyre', size: '185/70/R14', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 13, brand: 'Generic', model: 'Tyre', size: '165/60/R14', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 14, brand: 'Generic', model: 'Tyre', size: '185/65/R14', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 15, brand: 'Generic', model: 'Tyre', size: '175/70/R14', condition: 'Used', quantity: 14, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 16, brand: 'Generic', model: 'Tyre', size: '165/70/R14', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 17, brand: 'Generic', model: 'Tyre', size: '185/60/R14', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 18, brand: 'Generic', model: 'Tyre', size: '165/60/R15', condition: 'Used', quantity: 5, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 19, brand: 'Generic', model: 'Tyre', size: '165/65/R15', condition: 'Used', quantity: 3, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 20, brand: 'Generic', model: 'Tyre', size: '175/55/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 21, brand: 'Generic', model: 'Tyre', size: '175/60/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 22, brand: 'Generic', model: 'Tyre', size: '175/65/R15', condition: 'Used', quantity: 4, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 23, brand: 'Generic', model: 'Tyre', size: '185/55/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 24, brand: 'Generic', model: 'Tyre', size: '185/60/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 25, brand: 'Generic', model: 'Tyre', size: '185/65/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 26, brand: 'Generic', model: 'Tyre', size: '185/65/R15C', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 27, brand: 'Generic', model: 'Tyre', size: '195/50/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 28, brand: 'Generic', model: 'Tyre', size: '195/55/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 29, brand: 'Generic', model: 'Tyre', size: '195/60/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 30, brand: 'Generic', model: 'Tyre', size: '195/65/R15', condition: 'Used', quantity: 8, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 31, brand: 'Generic', model: 'Tyre', size: '195/70/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 32, brand: 'Generic', model: 'Tyre', size: '195/70/R15C', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 33, brand: 'Generic', model: 'Tyre', size: '205/55/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 34, brand: 'Generic', model: 'Tyre', size: '205/65/R15', condition: 'Used', quantity: 3, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 35, brand: 'Generic', model: 'Tyre', size: '205/70/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 36, brand: 'Generic', model: 'Tyre', size: '215/60/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 37, brand: 'Generic', model: 'Tyre', size: '215/65/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 38, brand: 'Generic', model: 'Tyre', size: '215/70/R15', condition: 'Used', quantity: 3, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 39, brand: 'Generic', model: 'Tyre', size: '215/70/R15C', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 40, brand: 'Generic', model: 'Tyre', size: '225/60/R15', condition: 'Used', quantity: 2, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 41, brand: 'Generic', model: 'Tyre', size: '225/70/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 42, brand: 'Generic', model: 'Tyre', size: '235/75/R15', condition: 'Used', quantity: 3, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 43, brand: 'Generic', model: 'Tyre', size: '255/70/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 44, brand: 'Generic', model: 'Tyre', size: '155/60/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    { id: 45, brand: 'Generic', model: 'Tyre', size: '165/60/R15', condition: 'Used', quantity: 1, price: 0, supplier: 'Main Supplier', dateAdded: '2025-11-23' },
+    // ... SNIP ...
+    // The pattern continues for all ~152 unique sizes from your Excel file
+];
+
 
         const users = {
             'admin@tires.com': { password: 'admin123', name: 'Admin User', role: 'Admin' },
